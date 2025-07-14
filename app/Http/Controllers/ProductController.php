@@ -171,4 +171,41 @@ class ProductController extends Controller
             'data' => $products
         ], 200);
     }
+
+    /**
+     * Tìm kiếm sản phẩm theo category và keyword
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function search(Request $request)
+    {
+        $query = Product::query();
+
+        // Xử lý đặc biệt cho category "ban-chay-nhat"
+        if ($request->has('category') && $request->category === 'ban-chay-nhat') {
+            $products = Product::with('details')->where('is_on_top', 1)->get();
+        } else {
+            // Tìm theo category thông thường
+            if ($request->has('category') && $request->category !== 'all') {
+                $query->where('category', $request->category);
+            }
+
+            // Tìm theo keyword nếu có
+            if ($request->has('keyword') && !empty($request->keyword)) {
+                $keyword = $request->keyword;
+                $query->where(function ($q) use ($keyword) {
+                    $q->where('title', 'LIKE', "%{$keyword}%")
+                        ->orWhere('description', 'LIKE', "%{$keyword}%");
+                });
+            }
+
+            $products = $query->with('details')->get();
+        }
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Search results',
+            'data' => $products
+        ], 200);
+    }
 }

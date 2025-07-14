@@ -10,9 +10,34 @@ class ProductController extends Controller
     /**
      * Hiển thị danh sách sản phẩm
      */
-    public function index()
+    public function index(Request $request)
     {
-        $products = Product::with('details')->get();
+        $query = Product::with('details');
+
+        // Sắp xếp theo tiêu chí
+        if ($request->has('sort')) {
+            switch ($request->sort) {
+                case 'popularity':
+                    $query->orderBy('purchases', 'desc'); // Sắp xếp theo số lượt mua
+                    break;
+                case 'price_asc':
+                    $query->orderBy('price', 'asc'); // Giá thấp đến cao
+                    break;
+                case 'price_desc':
+                    $query->orderBy('price', 'desc'); // Giá cao đến thấp
+                    break;
+                case 'newest':
+                    $query->orderBy('created_at', 'desc'); // Mới nhất
+                    break;
+                default:
+                    $query->orderBy('created_at', 'desc'); // Mặc định sắp xếp theo mới nhất
+            }
+        } else {
+            $query->orderBy('created_at', 'desc'); // Mặc định sắp xếp theo mới nhất
+        }
+
+        $products = $query->get();
+
         return response()->json([
             'success' => true,
             'message' => 'Product list',
@@ -120,12 +145,44 @@ class ProductController extends Controller
     }
 
     /**
-     * Lấy danh sách sản phẩm theo category
+     * Lấy danh sách sản phẩm theo category và sắp xếp theo tiêu chí
+     * @param string $category
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
      */
-    public function getByCategory($category)
+    public function getByCategory($category, Request $request)
     {
-        // $products = Product::with('details')->where('category', $category)->get();
-        $products = Product::where('category', $category)->get();
+        $query = Product::where('category', $category);
+
+        // Loại trừ sản phẩm nếu có exclude ID
+        if ($request->has('exclude')) {
+            $query->where('id', '!=', $request->exclude);
+        }
+
+        // Sắp xếp theo tiêu chí
+        if ($request->has('sort')) {
+            switch ($request->sort) {
+                case 'popularity':
+                    $query->orderBy('purchases', 'desc'); // Sắp xếp theo số lượt mua
+                    break;
+                case 'price_asc':
+                    $query->orderBy('price', 'asc'); // Giá thấp đến cao
+                    break;
+                case 'price_desc':
+                    $query->orderBy('price', 'desc'); // Giá cao đến thấp
+                    break;
+                case 'newest':
+                    $query->orderBy('created_at', 'desc'); // Mới nhất
+                    break;
+                default:
+                    $query->orderBy('created_at', 'desc'); // Mặc định sắp xếp theo mới nhất
+            }
+        } else {
+            $query->orderBy('created_at', 'desc'); // Mặc định sắp xếp theo mới nhất
+        }
+
+        $products = $query->get();
+
         return response()->json([
             'success' => true,
             'message' => 'Product list by category',

@@ -21,7 +21,13 @@ RUN composer install --no-dev --optimize-autoloader
 RUN chmod -R 777 storage bootstrap/cache
 
 # ⚠️ Thêm dòng này để tạo symbolic link storage
-RUN php artisan storage:link
+RUN php artisan config:clear \
+ && php artisan cache:clear \
+ && php artisan route:clear \
+ && php artisan view:clear \
+ && php artisan config:cache \
+ && php artisan view:cache \
+ && php artisan storage:link
 
 # Run Laravel server
 CMD php artisan serve --host=0.0.0.0 --port=${PORT}

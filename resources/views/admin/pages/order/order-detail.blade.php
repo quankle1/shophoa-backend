@@ -75,7 +75,7 @@
                                 @foreach ($order->items as $item)
                                     <tr>
                                         <td>{{ $loop->iteration }}</td>
-                                        <td>{{$item->product->name}}</td>
+                                        <td>{{$item->product->title}}</td>
                                         <td class="text-end fw-bold">{{number_format($item->price, 0, ',', '.') . ' ₫'}}</td>
                                         <td class="text-end">{{$item->quantity}}</td>
                                         <td class="text-end fw-bold">

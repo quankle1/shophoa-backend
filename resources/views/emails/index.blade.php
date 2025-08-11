@@ -15,7 +15,7 @@
 <body>
     <div style="padding: 20px 0; background-color: rgb(255, 244, 244);">
         <div class="header" style="text-align: center;">
-            <img src="{{ asset('storage/images/config/' . $configs['logo'] ?? '') }}" width="100%" alt="" style="max-width: 200px;">
+            <img src="{{ $message->embed(public_path('storage/images/config/' . $configs['logo'])) }}" width="100%" alt="" style="max-width: 200px;">
         </div>
         <div class="main" style="padding: 30px 0; background-color: white;">
             @yield('content')

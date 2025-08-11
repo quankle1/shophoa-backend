@@ -23,6 +23,7 @@ return [
         'http://localhost:5173',
         'http://127.0.0.1:5173',
         'https://shophoa-frontend-production-79d8.up.railway.app',
+        'https://shophoa-frontend-production.up.railway.app'
     ],
 
     'supports_credentials' => true,
